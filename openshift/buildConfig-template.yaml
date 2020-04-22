@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Template
 metadata:
-  name: package-extract-buildconfig
+  name: package-extract-buildconfig-bissenbay
   annotations:
-    description: This is Thoth Core - Package Extract BuildConfig
-    openshift.io/display-name: "Thoth: Package Extract BuildConfig"
+    description: This is Thoth Core - Package Extract BuildConfig Bissenbay
+    openshift.io/display-name: "Thoth: Package Extract BuildConfig Bissenbay"
     version: 0.4.0
-    tags: poc,thoth,ai-stacks,package-extract
+    tags: poc,thoth,ai-stacks,package-extract, bissenbay
     template.openshift.io/documentation-url: https://github.com/Thoth-Station/
     template.openshift.io/long-description: |-
       This template defines resources needed to deploy Thoth
@@ -14,21 +14,22 @@ metadata:
     template.openshift.io/provider-display-name: Red Hat, Inc.
     thoth-station.ninja/template-version: 0.4.0
   labels:
-    template: package-extract-buildconfig
+    template: package-extract-buildconfig-bissenbay
     app: thoth
-    component: package-extract
+    component: package-extract-bissenbay
 
 objects:
   - kind: BuildConfig
     apiVersion: v1
     metadata:
-      name: package-extract
+      name: package-extract-bissenbay
       annotations:
         thoth-station.ninja/template-version: 0.4.0
       labels:
         app: thoth
-        component: package-extract
+        component: package-extract-bissenbay
     spec:
+      containers:
       resources:
         requests:
           cpu: 2
@@ -39,7 +40,7 @@ objects:
       output:
         to:
           kind: ImageStreamTag
-          name: "package-extract:${IMAGE_STREAM_TAG}"
+          name: "package-extract-bissenbay:${IMAGE_STREAM_TAG}"
       source:
         type: Git
         git:
@@ -48,6 +49,10 @@ objects:
       strategy:
         dockerStrategy:
           dockerfilePath: Dockerfile
+          secrets:
+            - secretSource:
+                name: "entitlement"
+              mountPath: "/etc/pki/entitlement"
       triggers:
         - type: ConfigChange
         - type: ImageChange
@@ -62,13 +67,13 @@ parameters:
     displayName: Git Repository
     required: true
     name: GITHUB_URL
-    value: 'https://github.com/thoth-station/package-extract'
+    value: 'https://github.com/bissenbay/package-extract'
 
   - description: Git reference to be used
     displayName: Git Reference
     required: true
     name: GITHUB_REF
-    value: 'master'
+    value: 'port-to-ubi8'
 
   - description: Tag of the output ImageStream the resulting container image should go to
     displayName: ImageStream Tag

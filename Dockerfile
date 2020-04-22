@@ -1,10 +1,11 @@
-FROM fedora:28
+FROM registry.access.redhat.com/ubi8/ubi
+USER root
 
 ENV PATH=$HOME/.local/bin/:$PATH \
     PYTHONUNBUFFERED=1 \
     PYTHONIOENCODING=UTF-8 \
-    LC_ALL=en_US.UTF-8 \
-    LANG=en_US.UTF-8 \
+    LC_ALL=C.UTF-8 \
+    LANG=C.UTF-8 \
     GOPATH='/tmp/go' \
     THOTH_ANALYZER_NO_TLS_VERIFY='True'
 
@@ -16,7 +17,7 @@ LABEL io.k8s.description="Thoth Package Extract Base" \
     license="GPLv3"
 
 RUN dnf update -y --setopt='tsflags=nodocs' && \
-    dnf install -y --setopt='tsflags=nodocs' python-pip go git make skopeo dnf-utils fakeroot fakechroot && \
+    dnf install -y --setopt='tsflags=nodocs' python3-pip go git make skopeo dnf-utils fakeroot fakechroot && \
     dnf clean all && \
     dnf install -y binutils
 
@@ -24,8 +25,6 @@ COPY ./ /tmp/package-extract
 RUN cd /tmp/package-extract && \
     make all && \
     rm -rf /tmp/package-extract
-
-USER 1042
 
 CMD ["extract-image"]
 ENTRYPOINT ["thoth-package-extract"]
